@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+
+    <style>
+        img {
+            max-width: 200px;
+
+        }
+
+        .data-container {
+            display: grid;
+        }
+
+        @media screen and (min-width:480px) {
+            .data-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            article:nth-child(even) {
+                background-color: lightslategray;
+
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <section class="data-container"></section>
+
+    <template class="data-template">
+        <article>
+
+            <h2></h2>
+            <p class="id"></p>
+            <p class="kategori"></p>
+            <p class="navn"></p>
+            <p class="pris"></p>
+            <p class="kortbeskrivelse"></p>
+            <p class="langbeskrivelse"></p>
+            <p class="oprindelsesregion"></p>
+            <img src="" alt="">
+
+
+        </article>
+    </template>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", hentJson);
+        let babus = [];
+
+        async function hentJson() {
+
+            let myJson = await fetch("menu.json");
+            babus = await myJson.json();
+
+            console.log(babus[0].id);
+            visBabus();
+        }
+
+        function visBabus() {
+            let modtager = document.querySelector(".data-container");
+            let temp = document.querySelector(".data-template");
+            //løb personer igennem og lav en klon
+            babus.forEach(babu => {
+                let klon = temp.cloneNode(true).content;
+                //indsæt data i html
+                klon.querySelector("h2").textContent = babu.id;
+                klon.querySelector(".id").textContent = babu.kategori;
+                klon.querySelector(".kategori").textContent = babu.navn;
+                klon.querySelector(".navn").textContent = babu.pris;
+                klon.querySelector(".pris").textContent = babu.kortbeskrivelse;
+                klon.querySelector(".kortbeskrivelse").textContent = babu.langbeskrivelse;
+                klon.querySelector(".langbeskrivelse").textContent = babu.oprindelsesregion;
+                klon.querySelector(".oprindelsesregion").textContent = babu.oprindelsesregion;
+                klon.querySelector("img").src = "imgs/small/" + babu.billede + "-sm.jpg";
+
+                modtager.appendChild(klon);
+            })
+        }
+
+    </script>
+
+</body>
+
+</html>
