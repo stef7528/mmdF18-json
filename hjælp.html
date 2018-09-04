@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hent JSON</title>
+    <style>
+        body {
+            background-color: rgb(240, 240, 240);
+        }
+
+        article {
+            padding: 1em;
+            background-color: white;
+        }
+
+        .data-container article img {
+            width: 100%;
+        }
+
+        .data-container {
+            margin: 0 auto;
+            display: grid;
+        }
+
+        @media screen and (min-width:580px) {
+            .data-container {
+                padding-left: 10%;
+                padding-right: 10%;
+                grid-gap: 5px;
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        s
+
+    </style>
+</head>
+
+
+
+<body>
+
+    <header>
+        <h1></h1>
+        <nav>
+
+            <button class="menu-item" data-civilstatus="alle">Alle personer</button>
+            <button class="menu-item" data-civilstatus="single">Singler</button>
+            <button class="menu-item" data-civilstatus="optaget">I forhold</button>
+
+        </nav>
+
+    </header>
+    <main class="container">
+        <section class="data-container"></section>
+
+    </main>
+
+    <template class="data-template">
+        <article class="person">
+            <h2></h2>
+            <img src="" alt=""><br>
+            Status: <span class="data-civilstatus"></span><br>
+        </article>
+    </template>
+
+    <script>
+        let dest = document.querySelector(".data-container"),
+            personer,
+            civilFilter = "alle";
+
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+
+        async function hentJson() {
+            let myJson = await fetch("personliste.json");
+            personer = await myJson.json();
+            visPersoner();
+            console.log(personer);
+        }
+
+        document.querySelectorAll(".menu-item").forEach(knap => {
+            console.log(knap);
+            knap.addEventListener("click", filtrering)
+
+        });
+
+        function filtrering() {
+            civilFilter = this.getAttribute("data-civilstatus");
+            console.log(civilFilter);
+            visPersoner();
+        }
+
+
+        function visPersoner() {
+            console.log("1", civilFilter);
+            let dest = document.querySelector(".data-container"),
+                temp = document.querySelector(".data-template");
+            document.querySelector("header h1").textContent = civilFilter;
+
+            dest.textContent = "";
+            //løb personlisten igennem og lav en klon
+
+            personer.forEach(person => {
+                console.log("2", civilFilter);
+                if (person.civilstatus === civilFilter || civilFilter == "alle") {
+                    console.log("3", civilFilter, person.civilstatus);
+
+                    let klon = temp.cloneNode(true).content;
+                    //indsæt data i klonen
+                    klon.querySelector("h2").textContent = person.navn;
+                    klon.querySelector("img").src = person.billede;
+                    klon.querySelector(".data-civilstatus").textContent = person.civilstatus;
+
+                    //placer klon i DOM
+                    dest.appendChild(klon);
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

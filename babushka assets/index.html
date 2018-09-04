@@ -9,7 +9,7 @@
 
     <style>
         img {
-            max-width: 200px;
+            width: 100%;
 
         }
 
@@ -20,33 +20,61 @@
         @media screen and (min-width:480px) {
             .data-container {
                 grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: 600px 600px 600px;
+                grid-gap: 20px;
+
+
+
             }
 
-            article:nth-child(even) {
-                background-color: lightslategray;
+            article:nth-child(odd) {
+                background-color: rgba(245, 151, 42, 0.62);
 
             }
         }
 
+        h1::first-letter {
+            text-transform: uppercase;
+
+        }
     </style>
 </head>
 
 <body>
+
+    <img src="BISTRO-01.png" alt="bistro">
+
+    <header>
+
+        <nav>
+
+            <button class="menu-item" data-menu="alle">Alle</button>
+            <button class="menu-item" data-menu="forretter">Forretter</button>
+            <button class="menu-item" data-menu="hovedretter">Hovedretter</button>
+            <button class="menu-item" data-menu="sideorders">Sideorders</button>
+            <button class="menu-item" data-menu="drikkevarer">Drikkevarer</button>
+
+
+
+        </nav>
+        <h1></h1>
+
+    </header>
 
     <section class="data-container"></section>
 
     <template class="data-template">
         <article>
 
-            <h2></h2>
-            <p class="id"></p>
-            <p class="kategori"></p>
+
+            <img src="" alt="">
+            <h1 class="kategori"></h1>
             <p class="navn"></p>
-            <p class="pris"></p>
             <p class="kortbeskrivelse"></p>
             <p class="langbeskrivelse"></p>
             <p class="oprindelsesregion"></p>
-            <img src="" alt="">
+            Pris:<p class="pris"></p>
+
 
 
         </article>
@@ -55,6 +83,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", hentJson);
         let babus = [];
+        let kategoriFilter = "alle";
+        let knapper = document.querySelector(".data-menu");
+
+
 
         async function hentJson() {
 
@@ -65,29 +97,62 @@
             visBabus();
         }
 
-        function visBabus() {
-            let modtager = document.querySelector(".data-container");
-            let temp = document.querySelector(".data-template");
-            //løb personer igennem og lav en klon
-            babus.forEach(babu => {
-                let klon = temp.cloneNode(true).content;
-                //indsæt data i html
-                klon.querySelector("h2").textContent = babu.id;
-                klon.querySelector(".id").textContent = babu.kategori;
-                klon.querySelector(".kategori").textContent = babu.navn;
-                klon.querySelector(".navn").textContent = babu.pris;
-                klon.querySelector(".pris").textContent = babu.kortbeskrivelse;
-                klon.querySelector(".kortbeskrivelse").textContent = babu.langbeskrivelse;
-                klon.querySelector(".langbeskrivelse").textContent = babu.oprindelsesregion;
-                klon.querySelector(".oprindelsesregion").textContent = babu.oprindelsesregion;
-                klon.querySelector("img").src = "imgs/small/" + babu.billede + "-sm.jpg";
 
-                modtager.appendChild(klon);
-            })
+
+        /*
+                document.addEventListener("DOMContentLoaded", hentJson);
+
+
+                async function hentJson() {
+                    let myJson = await fetch("menu.json");
+                    babus = await myJson.json();
+                    visBabus();
+                    console.log(babus);
+                }
+                */
+
+        document.querySelectorAll(".menu-item").forEach(knap => {
+            console.log(knap);
+            knap.addEventListener("click", filtrering)
+
+        });
+
+        function filtrering() {
+            kategoriFilter = this.getAttribute("data-menu");
+            console.log(kategoriFilter);
+            visBabus();
         }
 
-    </script>
 
+        function visBabus() {
+            console.log("1", kategoriFilter);
+            let dest = document.querySelector(".data-container"),
+                temp = document.querySelector(".data-template");
+            document.querySelector("header h1").textContent = kategoriFilter;
+
+            dest.textContent = "";
+            //løb personlisten igennem og lav en klon
+
+            babus.forEach(babu => {
+                console.log("2", kategoriFilter);
+                if (babu.kategori == kategoriFilter || kategoriFilter == "alle") {
+                    console.log("3", kategoriFilter, babu.kategori);
+
+                    let klon = temp.cloneNode(true).content;
+                    //indsæt data i klonen
+                    klon.querySelector(".kategori").textContent = babu.navn;
+                    klon.querySelector(".kortbeskrivelse").textContent = babu.kortbeskrivelse;
+                    //klon.querySelector(".langbeskrivelse").textContent = babu.langbeskrivelse;//
+                    //klon.querySelector(".oprindelsesregion").textContent = babu.oprindelsesregion;
+                    klon.querySelector("img").src = "imgs/small/" + babu.billede + "-sm.jpg";
+                    klon.querySelector(".pris").textContent = babu.pris;
+
+                    dest.appendChild(klon);
+                }
+            });
+        }
+    </script>
 </body>
+
 
 </html>
