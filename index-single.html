@@ -74,6 +74,7 @@
             max-width: 350px;
             pointer-events: all;
         }
+
     </style>
 </head>
 
@@ -91,11 +92,9 @@
         </div>
     </section>
 
-
-    <img src="BISTRO-01.png" alt="bistro">
-
     <header>
 
+        <img src="BISTRO-01.png" alt="bistro">
         <nav>
 
             <button class="menu-item" data-menu="alle">Alle</button>
@@ -131,6 +130,8 @@
     </template>
 
     <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        let id = urlParams.get("id");
         document.addEventListener("DOMContentLoaded", hentJson);
         let babus = [];
         let kategoriFilter = "alle";
@@ -192,11 +193,9 @@
                     //indsæt data i klonen
                     klon.querySelector(".kategori").textContent = babu.navn;
                     klon.querySelector(".kortbeskrivelse").textContent = babu.kortbeskrivelse;
-                    //klon.querySelector(".langbeskrivelse").textContent = babu.langbeskrivelse;//
-                    //klon.querySelector(".oprindelsesregion").textContent = babu.oprindelsesregion;
                     klon.querySelector("img").src = "imgs/small/" + babu.billede + "-sm.jpg";
                     klon.querySelector("img").addEventListener("click", () => {
-                        visModal(babu);
+                        window.location.href = "single.html?id=" + babu.id;
                     });
                     klon.querySelector(".pris").textContent = babu.pris;
 
@@ -205,22 +204,6 @@
             });
         }
 
-        function visModal(retten) {
-            modal.classList.add("vis");
-            modal.querySelector(".modal-navn").textContent = retten.navn;
-            modal.querySelector(".modal-billede").src = "imgs/medium/" + retten.billede + "-md.jpg";
-            modal.querySelector(".langbeskrivelse").textContent = retten.langbeskrivelse;
-            modal.querySelector(".oprindelsesregion").textContent = retten.oprindelsesregion;
-            modal.querySelector(".pris").textContent = retten.pris;
-            modal.querySelector("button").addEventListener("click", skjulModal);
-
-        }
-
-        function skjulModal() {
-            //window.scrollTo(0);
-            console.log("test");
-            modal.classList.remove("vis");
-        }
     </script>
 </body>
 

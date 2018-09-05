@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+
+    <style>
+        img {
+            width: 100%;
+
+        }
+
+        .data-container {
+            display: grid;
+
+        }
+
+
+        @media screen and (min-width:480px) {
+            .data-container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-gap: 30px;
+                grid-row-gap: 50px;
+                width: 80%;
+                margin: 0 auto;
+
+
+            }
+
+            article:nth-child(odd) {
+                background-color: rgba(245, 151, 42, 0.62);
+
+
+            }
+        }
+
+        h1::first-letter {
+            text-transform: uppercase;
+
+        }
+
+        #modal {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            background-color: rgba(0, 0, 0, .7);
+            text-align: center;
+            /** skjuler den **/
+            transition: 1s;
+            opacity: 0;
+            pointer-events: none;
+
+        }
+
+        #modal-content {
+            width: 70vw;
+            height: 70vh;
+            background-color: rgba(250, 250, 250, 1);
+            margin: auto;
+
+        }
+
+        #modal.vis {
+            /*display: block;*/
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #modal img {
+
+            max-width: 350px;
+            pointer-events: all;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <body>
+
+        <section id="modal">
+            <button>Close</button>
+            <div id="modal-content">
+                <h2 class="modal-navn"></h2>
+                <img class="modal-billede" src="" alt="">
+                <p class="langbeskrivelse"></p>
+                <p>Pris: <span class="pris"></span></p>
+                <p>Retten stammer fra: <span class="oprindelsesregion"></span></p>
+
+            </div>
+        </section>
+
+
+        <img src="BISTRO-01.png" alt="bistro">
+
+        <header>
+
+            <nav>
+
+                <button class="menu-item" data-menu="alle">Alle</button>
+                <button class="menu-item" data-menu="forretter">Forretter</button>
+                <button class="menu-item" data-menu="hovedretter">Hovedretter</button>
+                <button class="menu-item" data-menu="sideorders">Sideorders</button>
+                <button class="menu-item" data-menu="drikkevarer">Drikkevarer</button>
+
+
+
+            </nav>
+            <h1></h1>
+
+        </header>
+
+        <section class="data-container"></section>
+
+        <template class="data-template">
+            <article>
+
+
+                <img src="" alt="">
+                <h1 class="kategori"></h1>
+                <p class="navn"></p>
+                <p class="kortbeskrivelse"></p>
+                <p class="langbeskrivelse"></p>
+                <p class="oprindelsesregion"></p>
+                Pris:<p class="pris"></p>
+
+
+
+            </article>
+        </template>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", hentJson);
+            let babus = [];
+            let kategoriFilter = "alle";
+            let knapper = document.querySelector(".data-menu");
+            async function hentJson() {
+                let myJson = await fetch("menu.json");
+                babus = await myJson.json();
+                console.log(babus[0].id);
+                visBabus();
+            }
+            /*
+                    document.addEventListener("DOMContentLoaded", hentJson);
+                    async function hentJson() {
+                        let myJson = await fetch("menu.json");
+                        babus = await myJson.json();
+                        visBabus();
+                        console.log(babus);
+                    }
+                    */
+            document.querySelectorAll(".menu-item").forEach(knap => {
+                console.log(knap);
+                knap.addEventListener("click", filtrering)
+            });
+
+            function filtrering() {
+                kategoriFilter = this.getAttribute("data-menu");
+                console.log(kategoriFilter);
+                visBabus();
+            }
+
+            function visBabus() {
+                console.log("1", kategoriFilter);
+                let dest = document.querySelector(".data-container"),
+                    temp = document.querySelector(".data-template");
+                document.querySelector("header h1").textContent = kategoriFilter;
+                dest.textContent = "";
+                //løb personlisten igennem og lav en klon
+                babus.forEach(babu => {
+                    console.log("2", kategoriFilter);
+                    if (babu.kategori == kategoriFilter || kategoriFilter == "alle") {
+                        console.log("3", kategoriFilter, babu.kategori);
+                        let klon = temp.cloneNode(true).content;
+                        //indsæt data i klonen
+                        klon.querySelector(".kategori").textContent = babu.navn;
+                        klon.querySelector(".kortbeskrivelse").textContent = babu.kortbeskrivelse;
+                        //klon.querySelector(".langbeskrivelse").textContent = babu.langbeskrivelse;//
+                        //klon.querySelector(".oprindelsesregion").textContent = babu.oprindelsesregion;
+                        klon.querySelector("img").src = "imgs/small/" + babu.billede + "-sm.jpg";
+                        klon.querySelector(".pris").textContent = babu.pris;
+                        dest.appendChild(klon);
+                    }
+                });
+            }
+
+            /*opgave slut*/
+
+        </script>
+    </body>
+
+
+</html>
